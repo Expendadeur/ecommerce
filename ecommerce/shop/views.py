@@ -133,7 +133,7 @@ def detail(request, myid):
     related_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:4]
 
     # Message WhatsApp pré-rempli
-    whatsapp_phone = "25779000000" # Numéro WhatsApp Janvier-Shop Burundi
+    whatsapp_phone = "25768589729" # Numéro WhatsApp Janvier-Shop Burundi
     product_url = request.build_absolute_uri()
     whatsapp_text = f"Bonjour Janvier-Shop, je souhaite commander l'article : *{product.title}* au prix de *{int(product.price):,} BIF*.\nLien du produit : {product_url}"
     whatsapp_link = f"https://wa.me/{whatsapp_phone}?text={urllib.parse.quote(whatsapp_text)}"
