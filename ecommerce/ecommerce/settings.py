@@ -14,7 +14,7 @@ from pathlib import Path
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 import os
-import django_heroku
+#import django_heroku
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -164,7 +164,4 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Only apply Heroku settings if running in Heroku environment
-if 'DYNO' in os.environ:
-    django_heroku.settings(locals())
 
