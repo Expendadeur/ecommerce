@@ -1,0 +1,78 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Mes Favoris - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-heart text-danger me-2"></i> Ma Liste de Favoris</h1>
+            <p class="text-muted small mb-0">Retrouvez tous vos articles sauvegardés et ajoutez-les facilement à votre panier.</p>
+        </div>
+        <a href="{% url 'catalogue' %}" class="btn btn-outline-custom btn-sm">
+            <i class="fa-solid fa-plus me-1"></i> Explorer le catalogue
+        </a>
+    </div>
+
+    {% if products %}
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="product-card">
+                <!-- Remove from wishlist -->
+                <button type="button" class="product-wishlist-btn active" onclick="toggleWishlist('{{ product.id }}', this); $(this).closest('.col-lg-3').fadeOut(300);" title="Retirer des favoris">
+                    <i class="fa-solid fa-heart text-danger"></i>
+                </button>
+
+                <span class="badge-category">{{ product.category.name }}</span>
+
+                <div class="product-img-wrapper">
+                    <a href="{% url 'detail' product.id %}" class="w-100 h-100">
+                        <img src="{{ product.image }}" alt="{{ product.title }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';">
+                    </a>
+                </div>
+
+                <div class="product-body">
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                        <span class="text-warning small"><i class="fa-solid fa-star"></i></span>
+                        <span class="small fw-bold">{{ product.rating }}</span>
+                    </div>
+
+                    <a href="{% url 'detail' product.id %}" class="text-decoration-none">
+                        <h3 class="product-title">{{ product.title }}</h3>
+                    </a>
+
+                    <div class="d-flex align-items-baseline mb-3">
+                        <span class="product-price">{{ product.price|floatformat:0 }} BIF</span>
+                    </div>
+
+                    <div class="mt-auto d-flex gap-2">
+                        <button class="btn btn-primary-custom w-100 py-2 small" onclick="addToCart('{{ product.id }}', '{{ product.title|escapejs }}', '{{ product.price }}', '{{ product.image|escapejs }}')">
+                            <i class="fa-solid fa-cart-plus me-1"></i> Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="p-5 card border rounded-4 shadow-sm max-w-md mx-auto" style="max-width: 500px; margin: 0 auto;">
+            <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; font-size: 2rem;">
+                <i class="fa-regular fa-heart"></i>
+            </div>
+            <h4 class="fw-bold mb-2">Votre liste de favoris est vide</h4>
+            <p class="text-muted small mb-4">Cliquez sur l'icône de cœur sur n'importe quel produit pour le sauvegarder et le retrouver ici à tout moment.</p>
+            <div>
+                <a href="{% url 'catalogue' %}" class="btn btn-primary-custom px-4 py-2">
+                    <i class="fa-solid fa-bag-shopping me-2"></i> Découvrir les produits
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

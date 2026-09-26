@@ -1,0 +1,226 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Catalogue & Filtres - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+    <!-- Breadcrumb & Header -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Catalogue & Produits</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-3 border-bottom">
+        <div>
+            <h1 class="h3 fw-bold mb-1">
+                {% if active_category %}{{ active_category.name }}{% else %}Tous les Produits{% endif %}
+            </h1>
+            <p class="text-muted small mb-0">{{ total_results }} produit(s) disponible(s) en Francs Burundais (BIF)</p>
+        </div>
+
+        <!-- Sort Select Form -->
+        <form method="GET" class="d-flex align-items-center gap-2" id="sortForm">
+            <!-- Retain current filters -->
+            {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+            {% if active_category %}<input type="hidden" name="category" value="{{ active_category.slug }}">{% endif %}
+            {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand }}">{% endif %}
+            {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+            {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+            {% if in_stock_only %}<input type="hidden" name="in_stock" value="1">{% endif %}
+
+            <label class="small text-muted text-nowrap fw-semibold">Trier par :</label>
+            <select name="sort" class="form-select form-select-sm shadow-none" onchange="this.form.submit()" style="min-width: 170px;">
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Nouveautés</option>
+                <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Populaires</option>
+                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Prix : Croissant</option>
+                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix : Décroissant</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Meilleures notes</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3">
+            <div class="card border rounded-4 p-4 shadow-sm position-sticky" style="top: 90px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-sliders text-primary me-2"></i> Filtres</h5>
+                    <a href="{% url 'catalogue' %}" class="small text-danger text-decoration-none fw-semibold">Réinitialiser</a>
+                </div>
+
+                <form method="GET" action="{% url 'catalogue' %}">
+                    {% if sort_by %}<input type="hidden" name="sort" value="{{ sort_by }}">{% endif %}
+
+                    <!-- Search filter -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Recherche</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Mots-clés...">
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Category filter -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Catégories</label>
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{% url 'catalogue' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="text-decoration-none small py-1 px-2 rounded {% if not active_category %}bg-primary-subtle text-primary fw-bold{% else %}text-muted{% endif %}">
+                                Toutes les catégories
+                            </a>
+                            {% for cat in categories %}
+                            <a href="{% url 'catalogue' %}?category={{ cat.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="text-decoration-none small py-1 px-2 rounded {% if active_category.slug == cat.slug %}bg-primary-subtle text-primary fw-bold{% else %}text-muted{% endif %}">
+                                <i class="fa-solid {{ cat.icon }} me-1"></i> {{ cat.name }} ({{ cat.products.count }})
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Brand filter -->
+                    {% if brands %}
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Marques</label>
+                        <select name="brand" class="form-select form-select-sm shadow-none" onchange="this.form.submit()">
+                            <option value="">Toutes les marques</option>
+                            {% for b in brands %}
+                            <option value="{{ b }}" {% if selected_brand == b %}selected{% endif %}>{{ b }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <!-- Budget (BIF) filter -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Prix en BIF</label>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <input type="number" name="min_price" value="{{ min_price }}" class="form-control form-control-sm" placeholder="Min BIF">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_price" value="{{ max_price }}" class="form-control form-control-sm" placeholder="Max BIF">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="in_stock" value="1" id="inStockCheck" {% if in_stock_only %}checked{% endif %} onchange="this.form.submit()">
+                            <label class="form-check-label small fw-semibold" for="inStockCheck">
+                                Uniquement en stock
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-2 small">
+                        <i class="fa-solid fa-filter me-1"></i> Appliquer les filtres
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="product-card">
+                        
+                        <!-- Wishlist Toggle Button -->
+                        <button type="button" class="product-wishlist-btn {% if product.id in wishlist_product_ids %}active{% endif %}" onclick="toggleWishlist('{{ product.id }}', this)" title="Ajouter aux favoris">
+                            <i class="{% if product.id in wishlist_product_ids %}fa-solid fa-heart text-danger{% else %}fa-regular fa-heart{% endif %}"></i>
+                        </button>
+
+                        <span class="badge-category">{{ product.category.name }}</span>
+
+                        <div class="product-img-wrapper">
+                            <a href="{% url 'detail' product.id %}" class="w-100 h-100">
+                                <img src="{{ product.image }}" alt="{{ product.title }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';">
+                            </a>
+                        </div>
+
+                        <div class="product-body">
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                <span class="text-warning small"><i class="fa-solid fa-star"></i></span>
+                                <span class="small fw-bold">{{ product.rating }}</span>
+                                <span class="text-muted small">({{ product.reviews.count }})</span>
+                            </div>
+
+                            <a href="{% url 'detail' product.id %}" class="text-decoration-none">
+                                <h3 class="product-title">{{ product.title }}</h3>
+                            </a>
+
+                            <div class="d-flex align-items-baseline mb-3">
+                                <span class="product-price">{{ product.price|floatformat:0 }} BIF</span>
+                                {% if product.discount_price and product.discount_price > product.price %}
+                                    <span class="product-old-price">{{ product.discount_price|floatformat:0 }} BIF</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="{% url 'detail' product.id %}" class="btn btn-outline-custom flex-grow-1 text-center py-2">
+                                    Détails
+                                </a>
+                                <button class="btn btn-primary-custom py-2 px-3" onclick="addToCart('{{ product.id }}', '{{ product.title|escapejs }}', '{{ product.price }}', '{{ product.image|escapejs }}')" title="Ajouter au panier">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 py-5 text-center">
+                    <div class="p-5 card border rounded-4 shadow-sm">
+                        <i class="fa-solid fa-box-open fs-1 text-muted mb-3"></i>
+                        <h4 class="fw-bold">Aucun produit trouvé</h4>
+                        <p class="text-muted mb-4">Aucun article ne correspond à vos critères de recherche ou de filtre.</p>
+                        <div>
+                            <a href="{% url 'catalogue' %}" class="btn btn-primary-custom px-4">
+                                <i class="fa-solid fa-rotate-right me-2"></i> Voir tous les produits
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if products.has_other_pages %}
+            <div class="d-flex justify-content-center mt-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-custom gap-1">
+                        {% if products.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link rounded-circle" href="?page={{ products.previous_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in products.paginator.page_range %}
+                            {% if products.number == num %}
+                            <li class="page-item active"><span class="page-link rounded-circle">{{ num }}</span></li>
+                            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                            <li class="page-item"><a class="page-link rounded-circle" href="?page={{ num }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link rounded-circle" href="?page={{ products.next_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

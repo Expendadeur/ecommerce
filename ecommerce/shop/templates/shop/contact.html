@@ -1,0 +1,141 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Contactez-nous - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark"><i class="fa-solid fa-headset text-primary me-2"></i> Contactez Notre Équipe</h2>
+        <p class="text-muted">Une question sur un produit ou une commande ? Nous sommes disponibles 7j/7 pour vous aider.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Contact Information Cards -->
+        <div class="col-lg-5">
+            <div class="d-flex flex-column gap-3 mb-4">
+                <div class="p-4 bg-white rounded-4 border shadow-sm d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Téléphone & WhatsApp</h6>
+                        <p class="text-muted mb-0">+237 690 00 00 00 / +237 670 00 00 00</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded-4 border shadow-sm d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Email de Support</h6>
+                        <p class="text-muted mb-0">contact@janviershop.com</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded-4 border shadow-sm d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Boutique & Entrepôt</h6>
+                        <p class="text-muted mb-0">Chaussée du Peuple Murundi, Bujumbura, Burundi</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded-4 border shadow-sm d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-info-subtle text-info d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Horaires d'ouverture</h6>
+                        <p class="text-muted mb-0">Lundi - Samedi : 08h00 - 20h00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                <h4 class="fw-bold text-dark mb-3">Envoyez-nous un message</h4>
+                <p class="text-muted small mb-4">Remplissez le formulaire ci-dessous et recevez une réponse en moins de 2 heures.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Votre Nom *</label>
+                            <input type="text" name="nom" required class="form-control shadow-none" placeholder="Janvier Ndayisaba">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Votre Email *</label>
+                            <input type="email" name="email" required class="form-control shadow-none" placeholder="janvier@example.com">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Sujet de votre message *</label>
+                            <input type="text" name="sujet" required class="form-control shadow-none" placeholder="Question sur une commande, devis, etc.">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Votre Message *</label>
+                            <textarea name="message" required rows="5" class="form-control shadow-none" placeholder="Expliquez-nous comment nous pouvons vous aider..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-6 fw-bold">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Envoyer le message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="mt-5 pt-4">
+        <h3 class="fw-bold text-center text-dark mb-4">Questions Fréquentes (FAQ)</h3>
+        <div class="accordion accordion-flush mx-auto shadow-sm rounded-4 overflow-hidden border" id="faqAccordion" style="max-width: 850px;">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        Quels sont les délais de livraison ?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted">
+                        Les livraisons se font sous 24h dans la même ville (Douala / Yaoundé) et entre 48h à 72h pour les autres régions et pays partenaires.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        Puis-je payer à la réception de mon colis ?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted">
+                        Oui, nous proposons le paiement à la livraison (Cash on Delivery) en espèces ou via Mobile Money directement auprès du livreur.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        Comment effectuer un retour ou un échange ?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted">
+                        Vous disposez d'un délai de 14 jours après réception pour demander un échange ou un remboursement complet si le produit ne correspond pas à vos attentes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

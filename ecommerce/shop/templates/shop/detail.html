@@ -1,0 +1,363 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ product.title }} - Janvier-Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-img-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        position: sticky;
+        top: 90px;
+    }
+
+    .product-detail-img {
+        max-height: 420px;
+        width: 100%;
+        object-fit: contain;
+        border-radius: var(--radius-md);
+        transition: transform 0.3s ease;
+    }
+
+    .product-detail-img:hover {
+        transform: scale(1.03);
+    }
+
+    .review-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .btn-whatsapp-order {
+        background: #25d366;
+        color: #ffffff;
+        font-weight: 700;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 12px 20px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-whatsapp-order:hover {
+        background: #1eb956;
+        color: #ffffff;
+        box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalogue' %}" class="text-decoration-none">Catalogue</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalogue' %}?category={{ product.category.slug }}" class="text-decoration-none">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.title|truncatechars:35 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5 mb-5">
+        <!-- Main Image Box -->
+        <div class="col-lg-6">
+            <div class="product-detail-img-box position-relative">
+                
+                <!-- Wishlist Button -->
+                <button type="button" class="product-wishlist-btn {% if is_in_wishlist %}active{% endif %}" onclick="toggleWishlist('{{ product.id }}', this)" title="Ajouter aux favoris">
+                    <i class="{% if is_in_wishlist %}fa-solid fa-heart text-danger{% else %}fa-regular fa-heart{% endif %} fs-5"></i>
+                </button>
+
+                <img id="mainProductImg" src="{{ product.image }}" alt="{{ product.title }}" class="product-detail-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800';">
+                
+                {% if product.discount_price and product.discount_price > product.price %}
+                <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow">
+                        -{{ product.discount_percentage }}% RÉDUCTION
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details Info -->
+        <div class="col-lg-6">
+            <div class="ps-lg-3">
+                <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-2">
+                    {{ product.category.name }}
+                </span>
+
+                <h1 class="fw-bold display-6 mb-2">{{ product.title }}</h1>
+
+                <!-- Rating -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="text-warning fs-5">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <span class="fw-bold">{{ product.rating }} / 5</span>
+                    <span class="text-muted">({{ reviews.count }} avis vérifiés)</span>
+                </div>
+
+                <!-- Price Box -->
+                <div class="p-3 card border mb-4 d-flex align-items-baseline gap-3">
+                    <span class="display-6 fw-bold text-primary">{{ product.price|floatformat:0 }} BIF</span>
+                    {% if product.discount_price and product.discount_price > product.price %}
+                        <span class="text-muted text-decoration-line-through fs-5">{{ product.discount_price|floatformat:0 }} BIF</span>
+                        <span class="badge bg-danger rounded-pill px-3 py-2">-{{ product.discount_percentage }}%</span>
+                    {% endif %}
+                </div>
+
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    {% if product.stock > 0 %}
+                        <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> En Stock ({{ product.stock }} unités disponibles à Bujumbura)</span>
+                    {% else %}
+                        <span class="text-danger fw-bold"><i class="fa-solid fa-circle-xmark me-1"></i> Rupture de stock temporaire</span>
+                    {% endif %}
+                    {% if product.brand %}
+                        <span class="ms-3 text-muted">| Marque : <strong>{{ product.brand }}</strong></span>
+                    {% endif %}
+                </div>
+
+                <!-- Short Summary -->
+                <p class="text-muted lead fs-6 mb-4">
+                    {{ product.description|truncatewords:35 }}
+                </p>
+
+                <!-- Actions -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <div class="input-group" style="width: 130px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decrementDetailQty()">-</button>
+                        <input type="number" id="detailQty" class="form-control text-center fw-bold shadow-none" value="1" min="1" max="{{ product.stock }}">
+                        <button class="btn btn-outline-secondary" type="button" onclick="incrementDetailQty()">+</button>
+                    </div>
+                    <button class="btn btn-primary-custom px-4 py-3 flex-grow-1" onclick="addDetailedToCart()">
+                        <i class="fa-solid fa-cart-shopping me-2"></i> Ajouter au panier
+                    </button>
+                    <a href="{% url 'checkout' %}" class="btn btn-dark px-4 py-3" onclick="addDetailedToCart()">
+                        <i class="fa-solid fa-bolt me-2"></i> Commander
+                    </a>
+                </div>
+
+                <!-- WhatsApp Quick Order Button -->
+                <div class="mb-4">
+                    <a href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-order w-100 text-center">
+                        <i class="fa-brands fa-whatsapp fs-4"></i> Commander directement sur WhatsApp (+257 79 000 000)
+                    </a>
+                </div>
+
+                <!-- Advantages Badges -->
+                <div class="row g-2 border-top pt-4 text-muted small">
+                    <div class="col-6"><i class="fa-solid fa-truck-fast text-primary me-2"></i> Livraison express Burundi</div>
+                    <div class="col-6"><i class="fa-solid fa-shield-halved text-success me-2"></i> Garantie produit certifiée</div>
+                    <div class="col-6"><i class="fa-solid fa-mobile-screen-button text-info me-2"></i> EcoCash & Lumicash acceptés</div>
+                    <div class="col-6"><i class="fa-solid fa-money-bill-wave text-warning me-2"></i> Paiement Cash à la livraison</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Tabs: Description & Reviews -->
+    <div class="card border rounded-4 mb-5">
+        <div class="card-header border-bottom pt-3">
+            <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#descContent" type="button" role="tab">
+                        <i class="fa-solid fa-file-lines me-2"></i> Description Complète
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviewsContent" type="button" role="tab">
+                        <i class="fa-solid fa-comments me-2"></i> Avis Clients ({{ reviews.count }})
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body p-4">
+            <div class="tab-content" id="productTabsContent">
+                <!-- Description Tab -->
+                <div class="tab-pane fade show active" id="descContent" role="tabpanel">
+                    <h5 class="fw-bold mb-3">À propos de cet article</h5>
+                    <div class="lh-lg text-muted" style="white-space: pre-line;">
+                        {{ product.description }}
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviewsContent" role="tabpanel">
+                    <div class="row g-4">
+                        <!-- Existing Reviews -->
+                        <div class="col-lg-7">
+                            <h5 class="fw-bold mb-4">Commentaires & Évaluations</h5>
+                            {% for review in reviews %}
+                                <div class="d-flex gap-3 mb-4 pb-3 border-bottom">
+                                    <div class="review-avatar">
+                                        {{ review.name|slice:":1"|upper }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="fw-bold mb-0">{{ review.name }}</h6>
+                                            <small class="text-muted">{{ review.date_added|date:"d M Y" }}</small>
+                                        </div>
+                                        <div class="text-warning small mb-2">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="fa-solid fa-star"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <p class="text-muted small mb-0">{{ review.comment }}</p>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted py-3">Aucun avis pour l'instant. Soyez le premier à donner votre avis sur ce produit !</p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Add Review Form -->
+                        <div class="col-lg-5">
+                            <div class="p-4 card border rounded-4">
+                                <h5 class="fw-bold mb-3">Donner votre avis</h5>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Votre Nom complet *</label>
+                                        <input type="text" name="name" required class="form-control form-control-sm" placeholder="Ex: Aïcha Nkurunziza">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Votre Email *</label>
+                                        <input type="email" name="email" required class="form-control form-control-sm" placeholder="aicha@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Note d'évaluation *</label>
+                                        <select name="rating" class="form-select form-select-sm">
+                                            <option value="5" selected>⭐⭐⭐⭐⭐ (5/5) - Excellent</option>
+                                            <option value="4">⭐⭐⭐⭐ (4/5) - Très bon</option>
+                                            <option value="3">⭐⭐⭐ (3/5) - Moyen</option>
+                                            <option value="2">⭐⭐ (2/5) - Décevant</option>
+                                            <option value="1">⭐ (1/5) - Très insatisfait</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Votre Commentaire *</label>
+                                        <textarea name="comment" required rows="3" class="form-control form-control-sm" placeholder="Partagez votre expérience d'achat..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary-custom w-100 py-2 small">
+                                        Publier mon avis
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0">Articles Similaires</h3>
+            <a href="{% url 'catalogue' %}?category={{ product.category.slug }}" class="btn btn-outline-custom btn-sm">
+                Voir toute la catégorie <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row g-4">
+            {% for rel in related_products %}
+            <div class="col-lg-3 col-md-6 col-6">
+                <div class="product-card">
+                    <button type="button" class="product-wishlist-btn" onclick="toggleWishlist('{{ rel.id }}', this)" title="Ajouter aux favoris">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <div class="product-img-wrapper">
+                        <a href="{% url 'detail' rel.id %}" class="w-100 h-100">
+                            <img src="{{ rel.image }}" alt="{{ rel.title }}" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="product-body">
+                        <a href="{% url 'detail' rel.id %}" class="text-decoration-none">
+                            <h3 class="product-title small">{{ rel.title }}</h3>
+                        </a>
+                        <div class="d-flex align-items-baseline mb-2">
+                            <span class="product-price">{{ rel.price|floatformat:0 }} BIF</span>
+                        </div>
+                        <button class="btn btn-sm btn-primary-custom w-100 mt-auto" onclick="addToCart('{{ rel.id }}', '{{ rel.title|escapejs }}', '{{ rel.price }}', '{{ rel.image|escapejs }}')">
+                            Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function incrementDetailQty() {
+        var input = $('#detailQty');
+        var max = parseInt(input.attr('max')) || 999;
+        var current = parseInt(input.val()) || 1;
+        if (current < max) {
+            input.val(current + 1);
+        }
+    }
+
+    function decrementDetailQty() {
+        var input = $('#detailQty');
+        var current = parseInt(input.val()) || 1;
+        if (current > 1) {
+            input.val(current - 1);
+        }
+    }
+
+    function addDetailedToCart() {
+        var qty = parseInt($('#detailQty').val()) || 1;
+        var id = '{{ product.id }}';
+        var title = '{{ product.title|escapejs }}';
+        var unitPrice = parseFloat('{{ product.price }}');
+        var img = '{{ product.image|escapejs }}';
+
+        var cart = getCart();
+        var idStr = id.toString();
+
+        if (cart[idStr] !== undefined) {
+            cart[idStr][0] += qty;
+            cart[idStr][2] += (qty * unitPrice);
+        } else {
+            cart[idStr] = [qty, title, (qty * unitPrice), img];
+        }
+
+        saveCart(cart);
+        showToast(`${qty}x "${title}" ajouté(s) au panier !`);
+    }
+</script>
+{% endblock %}

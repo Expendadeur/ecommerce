@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Janvier-Shop | Votre Boutique en Ligne Premium au Burundi{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --dark: #0f172a;
+            --card-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.15);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+        }
+
+        [data-bs-theme="dark"] {
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --primary-light: #1e1b4b;
+            --dark: #f8fafc;
+            --card-bg: #1e293b;
+            --body-bg: #0f172a;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --card-hover-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.3);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Top Announcement Marquee */
+        .announcement-bar {
+            background: linear-gradient(90deg, #1e1b4b, #312e81, #4338ca);
+            color: #ffffff;
+            font-size: 0.82rem;
+            padding: 7px 0;
+            overflow: hidden;
+            font-weight: 500;
+        }
+
+        .announcement-bar a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .announcement-bar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.55rem;
+            color: var(--text-main) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-muted) !important;
+            padding: 8px 14px !important;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary) !important;
+            background-color: var(--primary-light);
+        }
+
+        /* Live Search Bar */
+        .live-search-container {
+            position: relative;
+            min-width: 260px;
+        }
+
+        .live-search-input {
+            border-radius: 50px;
+            background-color: var(--body-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 7px 18px 7px 38px;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+        }
+
+        .live-search-input:focus {
+            background-color: var(--card-bg);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            color: var(--text-main);
+        }
+
+        .live-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .live-search-dropdown {
+            position: absolute;
+            top: 105%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            z-index: 1050;
+            max-height: 380px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .live-search-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: var(--text-main);
+            transition: background 0.15s ease;
+        }
+
+        .live-search-item:last-child {
+            border-bottom: none;
+        }
+
+        .live-search-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .live-search-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        /* Cart & Wishlist Buttons */
+        .btn-nav-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-nav-icon:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-nav-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.7rem;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .btn-cart {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 8px 18px;
+            border: none;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+        }
+
+        .cart-badge {
+            background: #ffffff;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 0.78rem;
+            padding: 2px 7px;
+            border-radius: 20px;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: rgba(79, 70, 229, 0.35);
+        }
+
+        .product-img-wrapper {
+            position: relative;
+            background-color: rgba(0,0,0,0.03);
+            height: 230px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-img-wrapper img {
+            max-height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .product-wishlist-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+
+        .product-wishlist-btn.active, .product-wishlist-btn:hover {
+            color: #ef4444;
+            background: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .badge-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 50px;
+            z-index: 5;
+        }
+
+        .product-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.7rem;
+            transition: color 0.2s ease;
+        }
+
+        .product-title:hover {
+            color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .product-old-price {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: #ffffff;
+            border: none;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, var(--primary-hover), #3730a3);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-outline-custom {
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            background: var(--card-bg);
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        /* Floating WhatsApp Button */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #25d366;
+            color: #ffffff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            text-decoration: none;
+        }
+
+        .floating-whatsapp:hover {
+            transform: scale(1.12);
+            color: #ffffff;
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        /* Offcanvas Cart Drawer */
+        .cart-drawer {
+            border-left: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-main);
+            width: 400px !important;
+        }
+
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item-img {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .cart-qty-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--body-bg);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .cart-qty-btn:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0b0f19;
+            color: #94a3b8;
+            padding-top: 60px;
+            margin-top: auto;
+            border-top: 1px solid #1e293b;
+        }
+
+        footer h5 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1e293b;
+            padding: 20px 0;
+            margin-top: 50px;
+            font-size: 0.85rem;
+        }
+
+        /* Toast feedback */
+        .toast-custom {
+            background: var(--dark);
+            color: #ffffff;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger rounded-pill px-2 py-1">OFFRE SPÉCIALE</span>
+                <span>🔥 Livraison Express à Bujumbura & dans toutes les provinces du Burundi !</span>
+            </div>
+            <div class="d-none d-md-flex align-items-center gap-3">
+                <span><i class="fa-solid fa-headset me-1 text-info"></i> Support WhatsApp : <strong>+257 79 000 000</strong></span>
+                <span>|</span>
+                <span><i class="fa-solid fa-money-bill-wave me-1 text-success"></i> Monnaie locale : <strong>BIF</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fa-solid fa-bag-shopping text-primary"></i>
+                <span>Janvier-Shop</span>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars text-dark fs-4"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                            <i class="fa-solid fa-house me-1"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'catalogue' %}active{% endif %}" href="{% url 'catalogue' %}">
+                            <i class="fa-solid fa-boxes-stacked me-1"></i> Catalogue & Filtres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'order_tracking' %}active{% endif %}" href="{% url 'order_tracking' %}">
+                            <i class="fa-solid fa-map-location-dot me-1"></i> Suivi Commande
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                            <i class="fa-solid fa-circle-info me-1"></i> À Propos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                            <i class="fa-solid fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right Action Cluster -->
+                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                    
+                    <!-- Live Search Input -->
+                    <div class="live-search-container d-none d-sm-block">
+                        <i class="fa-solid fa-magnifying-glass live-search-icon"></i>
+                        <input type="text" id="liveSearchInput" class="form-control live-search-input" placeholder="Rechercher un produit..." autocomplete="off">
+                        <div id="liveSearchResults" class="live-search-dropdown"></div>
+                    </div>
+
+                    <!-- Dark Mode Toggle Button -->
+                    <button type="button" class="btn-nav-icon" id="darkModeToggle" title="Basculer Mode Sombre / Clair">
+                        <i class="fa-solid fa-moon" id="darkModeIcon"></i>
+                    </button>
+
+                    <!-- Wishlist Button -->
+                    <a href="{% url 'wishlist' %}" class="btn-nav-icon" title="Mes Favoris">
+                        <i class="fa-solid fa-heart text-danger"></i>
+                        <span class="btn-nav-badge" id="navWishlistCount">{{ wishlist_product_ids|length|default:"0" }}</span>
+                    </a>
+
+                    <!-- User Account / Auth Dropdown -->
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-custom dropdown-toggle d-flex align-items-center gap-2 py-2 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user text-primary"></i>
+                            <span class="small fw-bold">{{ user.first_name|default:user.username }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+                            <li><a class="dropdown-item py-2" href="{% url 'profile' %}"><i class="fa-solid fa-user-gear me-2 text-primary"></i> Mon Compte & Commandes</a></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'wishlist' %}"><i class="fa-solid fa-heart me-2 text-danger"></i> Mes Favoris</a></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item py-2" href="/admin/" target="_blank"><i class="fa-solid fa-shield-halved me-2 text-warning"></i> Panneau Administration</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i> Se Déconnecter</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-custom py-2 px-3 small" title="Connexion">
+                        <i class="fa-solid fa-user me-1"></i> Connexion
+                    </a>
+                    {% endif %}
+
+                    <!-- Cart Drawer Trigger Button -->
+                    <button type="button" class="btn btn-cart" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge" id="cartCount">0</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Global Messages / Alerts -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show border-0 shadow-sm rounded-3 d-flex align-items-center gap-2" role="alert">
+            <i class="fa-solid fa-circle-info fs-5"></i>
+            <div>{{ message }}</div>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating WhatsApp Direct Contact Button -->
+    <a href="https://wa.me/25779000000?text=Bonjour%20Janvier-Shop,%20j'ai%20une%20question%20concernant%20vos%20produits" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" title="Commander ou poser une question sur WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Offcanvas Cart Drawer -->
+    <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold d-flex align-items-center gap-2" id="cartDrawerLabel">
+                <i class="fa-solid fa-bag-shopping text-primary"></i> Mon Panier (<span id="drawerCartCount">0</span>)
+            </h5>
+            <button type="button" class="btn-close text-reset shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+            <div id="cartDrawerItems" class="overflow-auto pe-1" style="max-height: 60vh;">
+                <!-- Cart items dynamically injected via JS -->
+            </div>
+            <div class="border-top pt-3 mt-auto">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Sous-total :</span>
+                    <span class="fw-bold fs-5 text-primary" id="drawerSubtotal">0 BIF</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Livraison :</span>
+                    <span class="text-success fw-semibold">Gratuite à Bujumbura</span>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'checkout' %}" class="btn btn-primary-custom py-2 text-center fs-6">
+                        <i class="fa-solid fa-lock me-2"></i> Passer la commande
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger" onclick="clearCart()">
+                        <i class="fa-solid fa-trash me-1"></i> Vider le panier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Add to Cart / Wishlist -->
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 2000;">
+        <div id="cartToast" class="toast toast-custom align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                    <span id="toastMessage">Action effectuée avec succès !</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white fw-bold d-flex align-items-center gap-2 mb-3">
+                        <i class="fa-solid fa-bag-shopping text-primary"></i> Janvier-Shop
+                    </h4>
+                    <p class="text-muted pe-lg-4">
+                        Votre destination e-commerce préférée pour les produits high-tech, ordinateurs, smartphones et accessoires de qualité supérieure au Burundi et dans toute la région d'Afrique de l'Est.
+                    </p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="https://wa.me/25779000000" target="_blank" class="btn btn-sm btn-outline-secondary rounded-circle" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h5>Navigation</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a href="{% url 'home' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> Accueil</a></li>
+                        <li><a href="{% url 'catalogue' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> Catalogue complet</a></li>
+                        <li><a href="{% url 'wishlist' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> Mes favoris</a></li>
+                        <li><a href="{% url 'order_tracking' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> Suivi de commande</a></li>
+                        <li><a href="{% url 'about' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> À propos de nous</a></li>
+                        <li><a href="{% url 'contact' %}"><i class="fa-solid fa-angle-right me-1 text-primary"></i> Nous contacter</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5>Sécurité & Paiement</h5>
+                    <p class="text-muted small">
+                        Paiements 100% sécurisés en Francs Burundais (BIF) via EcoCash, Lumicash, Carte bancaire et Paiement Cash à la livraison.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 fs-3 text-muted">
+                        <i class="fa-solid fa-mobile-screen-button text-success" title="EcoCash / Lumicash"></i>
+                        <i class="fa-brands fa-cc-visa text-primary" title="Visa"></i>
+                        <i class="fa-brands fa-cc-mastercard text-warning" title="Mastercard"></i>
+                        <i class="fa-solid fa-money-bill-wave text-success" title="Paiement Cash en BIF"></i>
+                        <i class="fa-solid fa-shield-halved text-secondary" title="Paiement Sécurisé"></i>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5>Newsletter</h5>
+                    <p class="text-muted small">Recevez nos offres exclusives, réductions et nouveaux arrivages à Bujumbura.</p>
+                    <form action="{% url 'newsletter_subscribe' %}" method="POST" class="d-flex flex-column gap-2">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="email" name="newsletter_email" required class="form-control bg-dark border-secondary text-white" placeholder="Votre adresse email...">
+                            <button type="submit" class="btn btn-primary-custom"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container text-center text-md-between d-md-flex justify-content-between align-items-center">
+                <p class="mb-0">&copy; 2026 Janvier-Shop. Tous droits réservés. Développé pour le marché Burundais (BIF).</p>
+                <div class="d-flex gap-3 justify-content-center mt-2 mt-md-0">
+                    <a href="#">Conditions générales</a>
+                    <a href="#">Politique de confidentialité</a>
+                    <a href="{% url 'contact' %}">Support client</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Global Cart & UX Engine JS -->
+    <script>
+        // --- 1. DARK MODE ENGINE ---
+        function initTheme() {
+            var savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            var icon = $('#darkModeIcon');
+            if (theme === 'dark') {
+                icon.removeClass('fa-moon').addClass('fa-sun text-warning');
+            } else {
+                icon.removeClass('fa-sun text-warning').addClass('fa-moon');
+            }
+        }
+
+        $('#darkModeToggle').on('click', function() {
+            var currentTheme = document.documentElement.getAttribute('data-bs-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        // --- 2. CART ENGINE (BIF) ---
+        function getCart() {
+            var cart = localStorage.getItem('panier');
+            return cart ? JSON.parse(cart) : {};
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('panier', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            var cart = getCart();
+            var totalCount = 0;
+            var totalPrice = 0;
+            var drawerHtml = '';
+
+            for (var id in cart) {
+                var qty = cart[id][0];
+                var name = cart[id][1];
+                var price = parseFloat(cart[id][2]);
+                var img = cart[id][3] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200';
+
+                totalCount += qty;
+                totalPrice += price;
+
+                drawerHtml += `
+                    <div class="cart-item-row">
+                        <img src="${img}" alt="${name}" class="cart-item-img">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 small fw-bold text-truncate" style="max-width: 170px;">${name}</h6>
+                            <div class="text-primary fw-bold small">${Math.round(price).toLocaleString('fr-FR')} BIF</div>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <button type="button" class="cart-qty-btn" onclick="changeCartQty('${id}', -1)">-</button>
+                                <span class="small fw-bold">${qty}</span>
+                                <button type="button" class="cart-qty-btn" onclick="changeCartQty('${id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm text-danger" onclick="removeFromCart('${id}')" title="Supprimer">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            if (Object.keys(cart).length === 0) {
+                drawerHtml = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-cart-shopping fs-1 mb-3 text-secondary opacity-50"></i>
+                        <p class="mb-0 fw-semibold">Votre panier est vide</p>
+                        <small>Découvrez notre catalogue et ajoutez vos articles !</small>
+                    </div>
+                `;
+            }
+
+            $('#cartCount').text(totalCount);
+            $('#drawerCartCount').text(totalCount);
+            $('#drawerSubtotal').text(Math.round(totalPrice).toLocaleString('fr-FR') + ' BIF');
+            $('#cartDrawerItems').html(drawerHtml);
+        }
+
+        function addToCart(productId, title, price, imageUrl) {
+            var cart = getCart();
+            var idStr = productId.toString();
+            var itemPrice = parseFloat(price);
+
+            if (cart[idStr] !== undefined) {
+                cart[idStr][0] += 1;
+                cart[idStr][2] = (cart[idStr][0] * (itemPrice / (cart[idStr][0] - 1)));
+            } else {
+                cart[idStr] = [1, title, itemPrice, imageUrl || ''];
+            }
+
+            saveCart(cart);
+            showToast(`"${title}" ajouté au panier !`);
+        }
+
+        function changeCartQty(productId, delta) {
+            var cart = getCart();
+            var idStr = productId.toString();
+            if (cart[idStr] !== undefined) {
+                var unitPrice = cart[idStr][2] / cart[idStr][0];
+                cart[idStr][0] += delta;
+                if (cart[idStr][0] <= 0) {
+                    delete cart[idStr];
+                } else {
+                    cart[idStr][2] = cart[idStr][0] * unitPrice;
+                }
+                saveCart(cart);
+            }
+        }
+
+        function removeFromCart(productId) {
+            var cart = getCart();
+            var idStr = productId.toString();
+            if (cart[idStr] !== undefined) {
+                delete cart[idStr];
+                saveCart(cart);
+                showToast("Article supprimé du panier.");
+            }
+        }
+
+        function clearCart() {
+            localStorage.removeItem('panier');
+            updateCartUI();
+            showToast("Panier vidé.");
+        }
+
+        // --- 3. WISHLIST TOGGLE AJAX ---
+        function toggleWishlist(productId, btnElement) {
+            $.ajax({
+                url: `/favoris/toggle/${productId}/?format=json`,
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        $('#navWishlistCount').text(response.total_count);
+                        if (btnElement) {
+                            if (response.added) {
+                                $(btnElement).addClass('active').find('i').removeClass('fa-regular').addClass('fa-solid text-danger');
+                            } else {
+                                $(btnElement).removeClass('active').find('i').removeClass('fa-solid text-danger').addClass('fa-regular');
+                            }
+                        }
+                        showToast(response.message);
+                    }
+                }
+            });
+        }
+
+        // --- 4. LIVE SEARCH AUTOCOMPLETE ---
+        var searchTimer = null;
+        $('#liveSearchInput').on('input', function() {
+            var query = $(this).val().trim();
+            var dropdown = $('#liveSearchResults');
+
+            clearTimeout(searchTimer);
+            if (query.length < 2) {
+                dropdown.hide().empty();
+                return;
+            }
+
+            searchTimer = setTimeout(function() {
+                $.ajax({
+                    url: '/api/search/?q=' + encodeURIComponent(query),
+                    type: 'GET',
+                    success: function(data) {
+                        if (data.results && data.results.length > 0) {
+                            var html = '';
+                            data.results.forEach(function(item) {
+                                html += `
+                                    <a href="${item.url}" class="live-search-item">
+                                        <img src="${item.image}" alt="${item.title}" class="live-search-img">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="fw-bold small text-truncate">${item.title}</div>
+                                            <div class="text-primary fw-bold small">${item.price}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                            dropdown.html(html).show();
+                        } else {
+                            dropdown.html('<div class="p-3 text-muted text-center small">Aucun produit trouvé</div>').show();
+                        }
+                    }
+                });
+            }, 250);
+        });
+
+        // Hide live search dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.live-search-container').length) {
+                $('#liveSearchResults').hide();
+            }
+        });
+
+        // --- 5. TOAST HELPER ---
+        function showToast(msg) {
+            $('#toastMessage').text(msg);
+            var toastEl = document.getElementById('cartToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+                toast.show();
+            }
+        }
+
+        $(document).ready(function() {
+            initTheme();
+            updateCartUI();
+        });
+    </script>
+
+    {% block js %}{% endblock %}
+</body>
+</html>

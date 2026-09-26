@@ -1,0 +1,139 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Mon Compte Client - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <div class="row g-4">
+        <!-- Sidebar Profile -->
+        <div class="col-lg-4">
+            <div class="card border rounded-4 shadow-sm p-4 text-center">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mx-auto mb-3 shadow" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ user.first_name|default:user.username|make_list|first|upper }}
+                </div>
+                <h4 class="fw-bold mb-1">{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-muted small mb-3">{{ user.email }}</p>
+
+                <div class="d-flex justify-content-center gap-3 py-3 border-top border-bottom mb-4">
+                    <div>
+                        <h5 class="fw-bold text-primary mb-0">{{ orders.count }}</h5>
+                        <small class="text-muted">Commandes</small>
+                    </div>
+                    <div class="border-end"></div>
+                    <div>
+                        <h5 class="fw-bold text-danger mb-0">{{ wishlist_count }}</h5>
+                        <small class="text-muted">Favoris</small>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-2 text-start">
+                    <a href="{% url 'wishlist' %}" class="btn btn-outline-custom w-100 text-start py-2">
+                        <i class="fa-solid fa-heart text-danger me-2"></i> Ma liste de favoris
+                    </a>
+                    <a href="{% url 'catalogue' %}" class="btn btn-outline-custom w-100 text-start py-2">
+                        <i class="fa-solid fa-bag-shopping text-primary me-2"></i> Faire des achats
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100 text-start py-2">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+
+            <!-- Edit info form -->
+            <div class="card border rounded-4 shadow-sm p-4 mt-4">
+                <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-pen text-primary me-2"></i> Mettre à jour mes informations</h6>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Prénom</label>
+                        <input type="text" name="first_name" value="{{ user.first_name }}" class="form-control form-control-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Nom</label>
+                        <input type="text" name="last_name" value="{{ user.last_name }}" class="form-control form-control-sm">
+                    </div>
+                    <button type="submit" class="btn btn-primary-custom btn-sm w-100">
+                        Enregistrer
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders History -->
+        <div class="col-lg-8">
+            <div class="card border rounded-4 shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h4 class="fw-bold mb-0"><i class="fa-solid fa-receipt text-primary me-2"></i> Historique de mes Commandes</h4>
+                    <span class="badge bg-primary-subtle text-primary fw-bold">{{ orders.count }} commande(s)</span>
+                </div>
+
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>N° Commande</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>
+                                    <strong class="text-primary">{{ order.order_number }}</strong>
+                                </td>
+                                <td class="small text-muted">
+                                    {{ order.date_commande|date:"d/m/Y H:i" }}
+                                </td>
+                                <td>
+                                    <strong class="text-dark">{{ order.total }}</strong>
+                                </td>
+                                <td>
+                                    {% if order.status == 'DELIVERED' %}
+                                        <span class="badge bg-success">Livrée</span>
+                                    {% elif order.status == 'SHIPPED' %}
+                                        <span class="badge bg-info">En livraison</span>
+                                    {% elif order.status == 'PROCESSING' %}
+                                        <span class="badge bg-warning text-dark">En préparation</span>
+                                    {% elif order.status == 'CANCELLED' %}
+                                        <span class="badge bg-danger">Annulée</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">En attente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{% url 'order_tracking' %}?order_number={{ order.order_number }}" class="btn btn-sm btn-outline-primary" title="Suivre la commande">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                        </a>
+                                        <a href="{% url 'order_invoice' order.order_number %}" class="btn btn-sm btn-outline-secondary" title="Voir / Imprimer la facture">
+                                            <i class="fa-solid fa-file-invoice"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-bag-shopping fs-1 mb-3 opacity-50"></i>
+                    <h5>Vous n'avez pas encore passé de commande</h5>
+                    <p class="small">Vos futures commandes enregistrées s'afficheront ici en temps réel.</p>
+                    <a href="{% url 'catalogue' %}" class="btn btn-primary-custom btn-sm mt-2">
+                        Commencer mes achats
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

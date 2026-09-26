@@ -1,0 +1,265 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Validation de la Commande - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark"><i class="fa-solid fa-lock text-primary me-2"></i> Finaliser votre Commande</h2>
+        <p class="text-muted">Remplissez vos informations de livraison pour recevoir vos articles en toute sécurité.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Order Form (Left Column) -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                    <span class="badge bg-primary rounded-circle" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">1</span>
+                    Adresse de Livraison
+                </h5>
+
+                <form method="POST" id="checkoutForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="items" name="items">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Nom Complet *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-user text-muted"></i></span>
+                                <input type="text" id="nom" name="nom" class="form-control shadow-none" placeholder="Ex: Janvier Ndayisaba" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Adresse Email *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-envelope text-muted"></i></span>
+                                <input type="email" id="email" name="email" class="form-control shadow-none" placeholder="janvier@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Numéro de Téléphone *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-phone text-muted"></i></span>
+                                <input type="tel" id="phone" name="phone" class="form-control shadow-none" placeholder="+257 79 000 000" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Pays *</label>
+                            <select id="pays" name="pays" class="form-select shadow-none">
+                                <option value="Burundi" selected>Burundi</option>
+                                <option value="Rwanda">Rwanda</option>
+                                <option value="RD Congo">RD Congo</option>
+                                <option value="Tanzanie">Tanzanie</option>
+                                <option value="Kenya">Kenya</option>
+                                <option value="Ouganda">Ouganda</option>
+                                <option value="France">France</option>
+                                <option value="Autre">Autre pays</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Adresse de livraison (Quartier, Avenue, N°) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-map-pin text-muted"></i></span>
+                                <input type="text" id="address" name="address" class="form-control shadow-none" placeholder="Ex: Rohero I, Avenue de l'Université, N° 12" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold small">Ville *</label>
+                            <input type="text" name="ville" id="ville" class="form-control shadow-none" placeholder="Bujumbura / Gitega / Ngozi" required>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold small">Code Postal / Boîte</label>
+                            <input name="zipcode" id="zipcode" type="text" class="form-control shadow-none" placeholder="B.P. 1234">
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Payment Method Section -->
+                    <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary rounded-circle" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">2</span>
+                        Mode de Paiement
+                    </h5>
+
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <label class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light cursor-pointer">
+                            <input type="radio" name="payment_method" value="COD" checked class="form-check-input mt-0">
+                            <div>
+                                <strong class="d-block text-dark"><i class="fa-solid fa-hand-holding-dollar text-success me-2"></i> Paiement à la livraison</strong>
+                                <small class="text-muted">Payez en espèces ou par transfert lors de la réception du colis.</small>
+                            </div>
+                        </label>
+
+                        <label class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light cursor-pointer">
+                            <input type="radio" name="payment_method" value="MOBILE_MONEY" class="form-check-input mt-0">
+                            <div>
+                                <strong class="d-block text-dark"><i class="fa-solid fa-mobile-screen-button text-warning me-2"></i> Orange Money / MTN Mobile Money</strong>
+                                <small class="text-muted">Paiement instantané via votre compte mobile.</small>
+                            </div>
+                        </label>
+
+                        <label class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light cursor-pointer">
+                            <input type="radio" name="payment_method" value="CARD" class="form-check-input mt-0">
+                            <div>
+                                <strong class="d-block text-dark"><i class="fa-solid fa-credit-card text-primary me-2"></i> Carte Bancaire (Visa / Mastercard)</strong>
+                                <small class="text-muted">Paiement sécurisé par carte de crédit ou débit.</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <input type="hidden" name="total" id="total">
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-5 fw-bold" id="submitOrderBtn">
+                        <i class="fa-solid fa-circle-check me-2"></i> Confirmer & Passer la commande
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary (Right Column) -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 90px;">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-receipt text-primary me-2"></i> Récapitulatif de Commande</h5>
+
+                <div id="checkoutItemsList" class="mb-3 overflow-auto pe-1" style="max-height: 320px;">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Coupon Section -->
+                <div class="input-group mb-3">
+                    <input type="text" id="couponCode" class="form-control shadow-none text-uppercase" placeholder="Code Promo (ex: PROMO10)">
+                    <button class="btn btn-outline-dark" type="button" onclick="applyCoupon()">Appliquer</button>
+                </div>
+                <div id="couponAlert" class="small mb-3" style="display:none;"></div>
+
+                <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Sous-total :</span>
+                        <span class="fw-bold text-dark" id="summarySubtotal">0 BIF</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" id="discountRow" style="display:none !important;">
+                        <span class="text-success">Réduction :</span>
+                        <span class="fw-bold text-success" id="summaryDiscount">-0 BIF</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Frais de livraison :</span>
+                        <span class="fw-bold text-success">GRATUIT</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fs-5 fw-bold text-dark">Total à Payer :</span>
+                        <span class="fs-4 fw-extrabold text-primary" id="summaryTotal">0 BIF</span>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 text-muted small">
+                    <i class="fa-solid fa-lock text-success me-1"></i> Vos données personnelles sont protégées par un cryptage SSL 256 bits.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    var discountAmount = 0;
+
+    function renderCheckoutItems() {
+        var cart = getCart();
+        var container = $('#checkoutItemsList');
+        container.empty();
+
+        var subtotal = 0;
+        var itemCount = 0;
+
+        if (Object.keys(cart).length === 0) {
+            container.html(`
+                <div class="text-center py-4 text-muted">
+                    <i class="fa-solid fa-cart-arrow-down fs-2 mb-2"></i>
+                    <p class="mb-2">Votre panier est vide.</p>
+                    <a href="{% url 'home' %}" class="btn btn-sm btn-primary-custom">Voir les produits</a>
+                </div>
+            `);
+            $('#submitOrderBtn').prop('disabled', true);
+            return;
+        }
+
+        for (var id in cart) {
+            var qty = cart[id][0];
+            var name = cart[id][1];
+            var price = parseFloat(cart[id][2]);
+            var img = cart[id][3] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200';
+
+            subtotal += price;
+            itemCount += qty;
+
+            var itemHtml = `
+                <div class="d-flex align-items-center gap-3 py-2 border-bottom">
+                    <img src="${img}" alt="${name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold text-dark small text-truncate" style="max-width: 200px;">${name}</div>
+                        <div class="text-muted small">Quantité : ${qty}</div>
+                    </div>
+                    <div class="fw-bold text-primary small">${Math.round(price).toLocaleString('fr-FR')} BIF</div>
+                </div>
+            `;
+            container.append(itemHtml);
+        }
+
+        var grandTotal = Math.max(0, subtotal - discountAmount);
+
+        $('#summarySubtotal').text(Math.round(subtotal).toLocaleString('fr-FR') + ' BIF');
+        $('#summaryTotal').text(Math.round(grandTotal).toLocaleString('fr-FR') + ' BIF');
+        $('#total').val(Math.round(grandTotal).toLocaleString('fr-FR') + ' BIF');
+        $('#items').val(JSON.stringify(cart));
+    }
+
+    function applyCoupon() {
+        var code = $('#couponCode').val().trim().toUpperCase();
+        var alertBox = $('#couponAlert');
+        var cart = getCart();
+        var subtotal = 0;
+        for (var id in cart) {
+            subtotal += parseFloat(cart[id][2]);
+        }
+
+        if (code === 'PROMO10' || code === 'WELCOME10') {
+            discountAmount = subtotal * 0.10;
+            alertBox.removeClass('text-danger').addClass('text-success').text('Code promo appliqué : 10% de réduction !').show();
+            $('#discountRow').attr('style', 'display: flex !important;');
+            $('#summaryDiscount').text('-' + Math.round(discountAmount).toLocaleString('fr-FR') + ' BIF');
+        } else if (code === 'VIP20') {
+            discountAmount = subtotal * 0.20;
+            alertBox.removeClass('text-danger').addClass('text-success').text('Code promo VIP appliqué : 20% de réduction !').show();
+            $('#discountRow').attr('style', 'display: flex !important;');
+            $('#summaryDiscount').text('-' + Math.round(discountAmount).toLocaleString('fr-FR') + ' BIF');
+        } else {
+            discountAmount = 0;
+            alertBox.removeClass('text-success').addClass('text-danger').text('Code promo invalide. Essayez "PROMO10".').show();
+            $('#discountRow').attr('style', 'display: none !important;');
+        }
+        renderCheckoutItems();
+    }
+
+    $(document).ready(function() {
+        renderCheckoutItems();
+
+        $('#checkoutForm').on('submit', function() {
+            // Clear cart from local storage after successful checkout trigger
+            setTimeout(function() {
+                localStorage.removeItem('panier');
+            }, 500);
+        });
+    });
+</script>
+{% endblock %}

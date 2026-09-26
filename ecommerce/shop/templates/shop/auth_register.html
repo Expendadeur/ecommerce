@@ -1,0 +1,67 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Inscription Client - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border rounded-4 shadow-sm p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h3 class="fw-bold">Créer un Compte</h3>
+                    <p class="text-muted small">Rejoignez Janvier-Shop et suivez vos achats facilement au Burundi.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Nom Complet *</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border"><i class="fa-solid fa-user text-muted"></i></span>
+                            <input type="text" name="nom" required class="form-control shadow-none" placeholder="Ex: Jean Ndayishimiye">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Adresse Email *</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border"><i class="fa-solid fa-envelope text-muted"></i></span>
+                            <input type="email" name="email" required class="form-control shadow-none" placeholder="jean@example.com">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Mot de passe *</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border"><i class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="password" name="password" required class="form-control shadow-none" placeholder="Minimum 6 caractères">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">Confirmer le mot de passe *</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border"><i class="fa-solid fa-shield-halved text-muted"></i></span>
+                            <input type="password" name="password_confirm" required class="form-control shadow-none" placeholder="Retapez votre mot de passe">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-2 fs-6 fw-bold mb-3">
+                        Créer mon compte
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-0">
+                            Déjà inscrit ? 
+                            <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Se connecter</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

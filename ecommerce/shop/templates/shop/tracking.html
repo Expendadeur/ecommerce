@@ -1,0 +1,132 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Suivi de Commande - Janvier-Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .track-step {
+        position: relative;
+        text-align: center;
+        flex: 1;
+    }
+
+    .track-step-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+        transition: all 0.3s;
+        border: 4px solid #ffffff;
+        box-shadow: 0 0 0 2px #e2e8f0;
+    }
+
+    .track-step.active .track-step-icon {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #ffffff;
+        box-shadow: 0 0 0 2px var(--primary), 0 8px 16px rgba(79, 70, 229, 0.3);
+    }
+
+    .track-step.completed .track-step-icon {
+        background-color: #10b981;
+        color: #ffffff;
+        box-shadow: 0 0 0 2px #10b981;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark"><i class="fa-solid fa-map-location-dot text-primary me-2"></i> Suivi de votre Commande</h2>
+        <p class="text-muted">Entrez votre numéro de commande (ex: ORD-XXXXXX) ou votre email pour vérifier l'état d'avancement.</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-6">
+            <form method="GET" action="{% url 'order_tracking' %}">
+                <div class="input-group input-group-lg shadow-sm rounded-4 overflow-hidden">
+                    <span class="input-group-text bg-white border-0 ps-3"><i class="fa-solid fa-barcode text-primary"></i></span>
+                    <input type="text" name="order_number" value="{{ order_query }}" required placeholder="Numéro de commande ou email..." class="form-control border-0 shadow-none">
+                    <button type="submit" class="btn btn-primary-custom px-4">
+                        Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Tracking Result -->
+    {% if order %}
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Commande : {{ order.order_number }}</span>
+                        <h4 class="fw-bold text-dark mb-0">Destinataire : {{ order.nom }}</h4>
+                    </div>
+                    <div class="text-md-end mt-2 mt-md-0">
+                        <span class="text-muted small d-block">Statut actuel :</span>
+                        <span class="badge bg-success fs-6">{{ order.get_status_display }}</span>
+                    </div>
+                </div>
+
+                <!-- 4 Step Tracker -->
+                <div class="d-flex justify-content-between position-relative my-5">
+                    <div class="track-step {% if order.status in 'PENDING,CONFIRMED,PROCESSING,SHIPPED,DELIVERED' %}completed{% endif %}">
+                        <div class="track-step-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                        <h6 class="fw-bold small mb-0">Reçue</h6>
+                        <small class="text-muted d-none d-md-block">Commande enregistrée</small>
+                    </div>
+
+                    <div class="track-step {% if order.status in 'CONFIRMED,PROCESSING,SHIPPED,DELIVERED' %}completed{% elif order.status == 'PENDING' %}active{% endif %}">
+                        <div class="track-step-icon"><i class="fa-solid fa-box-open"></i></div>
+                        <h6 class="fw-bold small mb-0">Préparation</h6>
+                        <small class="text-muted d-none d-md-block">En entrepôt</small>
+                    </div>
+
+                    <div class="track-step {% if order.status in 'SHIPPED,DELIVERED' %}completed{% elif order.status == 'PROCESSING' %}active{% endif %}">
+                        <div class="track-step-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                        <h6 class="fw-bold small mb-0">En transit</h6>
+                        <small class="text-muted d-none d-md-block">Avec le livreur</small>
+                    </div>
+
+                    <div class="track-step {% if order.status == 'DELIVERED' %}completed{% elif order.status == 'SHIPPED' %}active{% endif %}">
+                        <div class="track-step-icon"><i class="fa-solid fa-house-circle-check"></i></div>
+                        <h6 class="fw-bold small mb-0">Livrée</h6>
+                        <small class="text-muted d-none d-md-block">À destination</small>
+                    </div>
+                </div>
+
+                <!-- Shipping Details -->
+                <div class="row g-3 p-3 bg-light rounded-3 mt-3">
+                    <div class="col-md-4">
+                        <span class="text-muted small d-block"><i class="fa-solid fa-calendar me-1"></i> Date d'enregistrement</span>
+                        <strong>{{ order.date_commande|date:"d F Y à H:i" }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted small d-block"><i class="fa-solid fa-location-dot me-1"></i> Destination</span>
+                        <strong>{{ order.ville }}, {{ order.pays }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted small d-block"><i class="fa-solid fa-money-bill me-1"></i> Montant total</span>
+                        <strong class="text-primary">{{ order.total }}</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

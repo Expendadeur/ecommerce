@@ -1,0 +1,97 @@
+{% extends "shop/base.html" %}
+
+{% block title %}À Propos de Nous - Janvier-Shop{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <!-- Hero About -->
+    <div class="row align-items-center mb-5 g-4">
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-2">NOTRE HISTOIRE</span>
+            <h1 class="fw-bold text-dark display-5 mb-3">La référence du commerce en ligne d'excellence</h1>
+            <p class="text-muted lead fs-6 mb-4">
+                Fondée par Janvier avec la passion d'offrir les meilleures innovations technologiques et produits du quotidien, Janvier-Shop s'engage à vous fournir des produits 100% authentiques aux prix les plus justes en Francs Burundais (BIF).
+            </p>
+            <div class="d-flex gap-3">
+                <a href="{% url 'home' %}#catalogue" class="btn btn-primary-custom px-4 py-3">
+                    <i class="fa-solid fa-bag-shopping me-2"></i> Découvrir nos offres
+                </a>
+                <a href="{% url 'contact' %}" class="btn btn-outline-custom px-4 py-3">
+                    <i class="fa-solid fa-envelope me-2"></i> Nous écrire
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://images.unsplash.com/photo-1556742049-0a67c55744cf?w=800&auto=format&fit=crop&q=80" alt="Notre Boutique" class="img-fluid rounded-4 shadow-lg">
+        </div>
+    </div>
+
+    <!-- Numbers Counter -->
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-md-3 col-6">
+            <div class="p-4 bg-white rounded-4 border shadow-sm">
+                <h2 class="display-6 fw-bold text-primary mb-1">{{ total_products|default:"500+" }}</h2>
+                <p class="text-muted mb-0 small fw-semibold">Produits Référencés</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 bg-white rounded-4 border shadow-sm">
+                <h2 class="display-6 fw-bold text-success mb-1">{{ total_orders|default:"1,200+" }}</h2>
+                <p class="text-muted mb-0 small fw-semibold">Commandes Livrées</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 bg-white rounded-4 border shadow-sm">
+                <h2 class="display-6 fw-bold text-warning mb-1">99.8%</h2>
+                <p class="text-muted mb-0 small fw-semibold">Clients Satisfaits</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 bg-white rounded-4 border shadow-sm">
+                <h2 class="display-6 fw-bold text-info mb-1">24h</h2>
+                <p class="text-muted mb-0 small fw-semibold">Délai Moyen de Livraison</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Values -->
+    <div class="p-5 bg-white rounded-4 border shadow-sm mb-5">
+        <h3 class="fw-bold text-dark text-center mb-5">Nos 4 Piliers Fondamentaux</h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    <i class="fa-solid fa-certificate"></i>
+                </div>
+                <h5 class="fw-bold">Produits Authentiques</h5>
+                <p class="text-muted small">Tous nos articles proviennent directement des fabricants certifiés et de distributeurs officiels.</p>
+            </div>
+
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h5 class="fw-bold">Expédition Express</h5>
+                <p class="text-muted small">Nous préparons et acheminons votre colis avec le plus grand soin dans les plus brefs délais.</p>
+            </div>
+
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="rounded-circle bg-warning-subtle text-warning d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <h5 class="fw-bold">Transparence Totale</h5>
+                <p class="text-muted small">Aucun frais caché. Paiement à la réception ou en ligne sécurisé en toute sérénité.</p>
+            </div>
+
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="rounded-circle bg-info-subtle text-info d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <h5 class="fw-bold">Service Client Dédié</h5>
+                <p class="text-muted small">Une équipe chaleureuse et réactive prête à vous assister avant, pendant et après vos achats.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,327 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Accueil - Janvier-Shop | La Première Boutique E-Commerce au Burundi{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Hero Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4338ca 100%);
+        border-radius: var(--radius-lg);
+        color: #ffffff;
+        padding: 60px 45px;
+        margin-bottom: 45px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -15px rgba(30, 27, 75, 0.4);
+    }
+
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, rgba(0,0,0,0) 70%);
+        top: -100px;
+        right: -60px;
+        border-radius: 50%;
+    }
+
+    .hero-title {
+        font-size: 2.9rem;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-title span {
+        background: linear-gradient(135deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Category Cards */
+    .category-pill {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        color: var(--text-main);
+        transition: all 0.25s ease;
+        box-shadow: var(--card-shadow);
+    }
+
+    .category-pill:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-hover-shadow);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .category-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        transition: all 0.25s ease;
+    }
+
+    .category-pill:hover .category-icon {
+        background: var(--primary);
+        color: #ffffff;
+    }
+
+    /* Feature Value Box */
+    .feature-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        text-align: center;
+        height: 100%;
+        transition: transform 0.25s ease;
+    }
+
+    .feature-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+    <!-- Hero Section -->
+    <div class="hero-banner">
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+            <div class="col-lg-7">
+                <span class="badge bg-info text-dark fw-bold px-3 py-2 rounded-pill mb-3">
+                    <i class="fa-solid fa-sparkles me-1"></i> LA TECH À PORTÉE DE MAIN AU BURUNDI
+                </span>
+                <h1 class="hero-title mb-3">
+                    Découvrez l'Excellence chez <span>Janvier-Shop</span>
+                </h1>
+                <p class="lead text-light opacity-90 mb-4 fs-6" style="max-width: 540px;">
+                    Smartphones dernier cri, ordinateurs ultra-performants, casques audio et accessoires garantis 100% authentiques. Payez en <strong>Francs Burundais (BIF)</strong> à la livraison ou par <strong>EcoCash / Lumicash</strong>.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'catalogue' %}" class="btn btn-primary-custom px-4 py-3 fs-6">
+                        <i class="fa-solid fa-bag-shopping me-2"></i> Explorer le Catalogue
+                    </a>
+                    <a href="{% url 'order_tracking' %}" class="btn btn-outline-light px-4 py-3 fs-6">
+                        <i class="fa-solid fa-truck me-2"></i> Suivre ma commande
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80" alt="High Tech" class="img-fluid rounded-4 shadow-lg" style="max-height: 320px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Pills Navigation -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h4 fw-bold mb-0">Parcourir par Catégorie</h3>
+            <a href="{% url 'catalogue' %}" class="small text-primary text-decoration-none fw-bold">Tout voir <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-3">
+            {% for cat in categories %}
+            <div class="col-lg-2 col-md-4 col-6">
+                <a href="{% url 'catalogue' %}?category={{ cat.slug }}" class="category-pill">
+                    <div class="category-icon">
+                        <i class="fa-solid {{ cat.icon }}"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold small text-truncate" style="max-width: 100px;">{{ cat.name }}</div>
+                        <small class="text-muted">{{ cat.products.count }} articles</small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Featured Products Showcase -->
+    {% if featured_products %}
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="h4 fw-bold mb-0">🔥 Produits Vedettes</h3>
+                <p class="text-muted small mb-0">Les articles les plus demandés et les mieux notés</p>
+            </div>
+            <a href="{% url 'catalogue' %}?sort=popular" class="btn btn-outline-custom btn-sm">
+                Voir les meilleures ventes <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for product in featured_products %}
+            <div class="col-lg-4 col-md-6">
+                <div class="product-card">
+                    <!-- Wishlist Toggle Button -->
+                    <button type="button" class="product-wishlist-btn {% if product.id in wishlist_product_ids %}active{% endif %}" onclick="toggleWishlist('{{ product.id }}', this)" title="Ajouter aux favoris">
+                        <i class="{% if product.id in wishlist_product_ids %}fa-solid fa-heart text-danger{% else %}fa-regular fa-heart{% endif %}"></i>
+                    </button>
+
+                    <span class="badge-category">{{ product.category.name }}</span>
+
+                    <div class="product-img-wrapper">
+                        <a href="{% url 'detail' product.id %}" class="w-100 h-100">
+                            <img src="{{ product.image }}" alt="{{ product.title }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';">
+                        </a>
+                    </div>
+
+                    <div class="product-body">
+                        <div class="d-flex align-items-center gap-1 mb-1">
+                            <span class="text-warning small"><i class="fa-solid fa-star"></i></span>
+                            <span class="small fw-bold">{{ product.rating }}</span>
+                            <span class="text-muted small">({{ product.reviews.count }} avis)</span>
+                        </div>
+
+                        <a href="{% url 'detail' product.id %}" class="text-decoration-none">
+                            <h3 class="product-title">{{ product.title }}</h3>
+                        </a>
+
+                        <div class="d-flex align-items-baseline mb-3">
+                            <span class="product-price">{{ product.price|floatformat:0 }} BIF</span>
+                            {% if product.discount_price and product.discount_price > product.price %}
+                                <span class="product-old-price">{{ product.discount_price|floatformat:0 }} BIF</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="{% url 'detail' product.id %}" class="btn btn-outline-custom flex-grow-1 text-center py-2">
+                                Détails
+                            </a>
+                            <button class="btn btn-primary-custom py-2 px-3" onclick="addToCart('{{ product.id }}', '{{ product.title|escapejs }}', '{{ product.price }}', '{{ product.image|escapejs }}')" title="Ajouter au panier">
+                                <i class="fa-solid fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Products Arrivals -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="h4 fw-bold mb-0">✨ Nouveautés Récentes</h3>
+                <p class="text-muted small mb-0">Derniers équipements ajoutés à notre catalogue</p>
+            </div>
+            <a href="{% url 'catalogue' %}" class="btn btn-outline-custom btn-sm">
+                Tout le catalogue <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for product in recent_products %}
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="product-card">
+                    <button type="button" class="product-wishlist-btn {% if product.id in wishlist_product_ids %}active{% endif %}" onclick="toggleWishlist('{{ product.id }}', this)" title="Ajouter aux favoris">
+                        <i class="{% if product.id in wishlist_product_ids %}fa-solid fa-heart text-danger{% else %}fa-regular fa-heart{% endif %}"></i>
+                    </button>
+
+                    <span class="badge-category">{{ product.category.name }}</span>
+
+                    <div class="product-img-wrapper">
+                        <a href="{% url 'detail' product.id %}" class="w-100 h-100">
+                            <img src="{{ product.image }}" alt="{{ product.title }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';">
+                        </a>
+                    </div>
+
+                    <div class="product-body">
+                        <div class="d-flex align-items-center gap-1 mb-1">
+                            <span class="text-warning small"><i class="fa-solid fa-star"></i></span>
+                            <span class="small fw-bold">{{ product.rating }}</span>
+                        </div>
+
+                        <a href="{% url 'detail' product.id %}" class="text-decoration-none">
+                            <h3 class="product-title small">{{ product.title }}</h3>
+                        </a>
+
+                        <div class="d-flex align-items-baseline mb-3">
+                            <span class="product-price">{{ product.price|floatformat:0 }} BIF</span>
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="{% url 'detail' product.id %}" class="btn btn-outline-custom flex-grow-1 text-center py-2 small">
+                                Voir
+                            </a>
+                            <button class="btn btn-primary-custom py-2 px-3 small" onclick="addToCart('{{ product.id }}', '{{ product.title|escapejs }}', '{{ product.price }}', '{{ product.image|escapejs }}')" title="Ajouter au panier">
+                                <i class="fa-solid fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Value Propositions Banner -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-box">
+                <div class="feature-icon-wrapper bg-primary-subtle text-primary">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Livraison Rapide</h6>
+                <p class="text-muted small mb-0">Livré sous 24h à Bujumbura et expédié dans toutes les provinces.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-box">
+                <div class="feature-icon-wrapper bg-success-subtle text-success">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h6 class="fw-bold mb-1">100% Authentique</h6>
+                <p class="text-muted small mb-0">Produits originaux sous garantie constructeur certifiée.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-box">
+                <div class="feature-icon-wrapper bg-info-subtle text-info">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Paiement Mobile Local</h6>
+                <p class="text-muted small mb-0">EcoCash, Lumicash, Carte bancaire et Cash en Francs Burundais (BIF).</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-box">
+                <div class="feature-icon-wrapper bg-warning-subtle text-warning">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Service Client 7j/7</h6>
+                <p class="text-muted small mb-0">Conseillers à votre écoute sur WhatsApp au +257 79 000 000.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

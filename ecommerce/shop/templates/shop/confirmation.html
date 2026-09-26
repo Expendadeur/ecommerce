@@ -1,0 +1,128 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Confirmation de Commande - Janvier-Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-badge {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+        margin-bottom: 20px;
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes scaleIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+    }
+
+    @media print {
+        .navbar-custom, .top-bar, footer, .no-print {
+            display: none !important;
+        }
+        body {
+            background-color: #fff !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #000 !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 text-center">
+                
+                <div class="success-badge mx-auto">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+
+                <h2 class="fw-bold text-dark mb-2">Merci pour votre commande, {{ name }} !</h2>
+                <p class="text-muted mb-4 lead fs-6">
+                    Votre commande a bien été enregistrée et est actuellement en cours de préparation par notre équipe logistique.
+                </p>
+
+                <!-- Order Reference Alert -->
+                {% if commande %}
+                <div class="p-3 bg-light rounded-3 border mb-4 text-start">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Numéro de Commande</span>
+                            <strong class="text-primary fs-5">{{ commande.order_number }}</strong>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <span class="text-muted small d-block">Date de commande</span>
+                            <strong class="text-dark">{{ commande.date_commande|date:"d F Y à H:i" }}</strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Adresse de livraison</span>
+                            <span class="text-dark fw-semibold">{{ commande.address }}, {{ commande.ville }} ({{ commande.pays }})</span>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <span class="text-muted small d-block">Mode de paiement</span>
+                            <span class="badge bg-secondary">{{ commande.get_payment_method_display }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchased Items Breakdown -->
+                {% if items_list %}
+                <div class="table-responsive mb-4 text-start">
+                    <table class="table table-borderless align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Article</th>
+                                <th class="text-center">Quantité</th>
+                                <th class="text-end">Prix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items_list %}
+                            <tr class="border-bottom">
+                                <td class="fw-semibold text-dark">{{ item.name }}</td>
+                                <td class="text-center"><span class="badge bg-primary-subtle text-primary">{{ item.qty }}</span></td>
+                                <td class="text-end fw-bold text-dark">{{ item.price }} BIF</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="2" class="text-end fw-bold fs-5 pt-3">Total Payé :</td>
+                                <td class="text-end fw-bold fs-5 text-primary pt-3">{{ commande.total }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% endif %}
+
+                <div class="d-flex flex-wrap justify-content-center gap-3 no-print">
+                    <button onclick="window.print()" class="btn btn-outline-dark px-4 py-2">
+                        <i class="fa-solid fa-print me-2"></i> Imprimer le reçu
+                    </button>
+                    {% if commande %}
+                    <a href="{% url 'order_tracking' %}?order_number={{ commande.order_number }}" class="btn btn-outline-primary px-4 py-2">
+                        <i class="fa-solid fa-map-location-dot me-2"></i> Suivre ma commande
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'home' %}" class="btn btn-primary-custom px-4 py-2">
+                        <i class="fa-solid fa-bag-shopping me-2"></i> Continuer mes achats
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
